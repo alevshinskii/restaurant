@@ -1,0 +1,39 @@
+﻿@model Restaurant.Models.Order
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    ViewData["Title"] = "Оформление заказа";
+}
+
+<h2 class="my-3">Ваш заказ: </h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" asp-controller="Orders">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ClientId" />
+            <input type="hidden" asp-for="Status" />
+            <input type="hidden" asp-for="TotalPrice" />
+            <input type="hidden" asp-for="Date" />
+            <input type="hidden" asp-for="DeliveryMethod" />
+
+            <div class="form-group mb-3">
+                <label asp-for="TotalPrice" class="control-label"></label>
+                @Html.DisplayFor(model => model.TotalPrice)<span> ₽ </span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <input type="submit" value="Подтвердить" class="btn btn-success" />
+            </div>
+        </form>
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Отменить" class="btn btn-link" />
+        </form>
+    </div>
+</div>

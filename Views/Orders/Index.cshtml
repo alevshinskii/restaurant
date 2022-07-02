@@ -1,0 +1,97 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<Restaurant.Models.Order>
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Заказы";
+    string userName = UserManager.GetUserName(User);
+    IdentityUser user = await UserManager.FindByNameAsync(userName);
+    var items = (List<Item>)ViewBag.Items;
+    var products = (List<Product>)ViewBag.Products;
+}
+
+<h2 class="mb-3">Заказы</h2>
+
+<table class="table mb-3">
+    <thead>
+        <tr>
+            <th>
+               ID Клиента
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeliveryMethod)
+            </th>
+            <th>
+                Статус
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var order in Model) {
+    <tr>
+        <td>
+            @order.ClientId
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => order.TotalPrice) ₽ 
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => order.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => order.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => order.DeliveryMethod)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => order.Status)
+        </td>
+        <td>
+            @if (user != null && (await UserManager.IsInRoleAsync(user, "admin")||await UserManager.IsInRoleAsync(user, "admin"))){
+                <a asp-action="Delete" asp-route-id="@order.Id">Удалить</a>
+            }
+            else if(user != null && await UserManager.IsInRoleAsync(user, "kitchen")){
+                <a asp-action="OrderCooked" asp-route-orderId="@order.Id">Приготовлен</a> 
+            }
+            else if(user != null && await UserManager.IsInRoleAsync(user, "kassa")){
+                <a asp-action="OrderReady" asp-route-orderId="@order.Id">Готов к выдаче</a> 
+                <a asp-action="OrderEnd" asp-route-orderId="@order.Id">Завершён</a>
+            }
+        </td>
+    </tr>
+    @if (items.Any(i => i.OrderId == order.Id))
+    {
+        <tr>
+            <td colspan="7">
+                <ul>
+                    @foreach (var item in items.Where(i => i.OrderId == order.Id))
+                    {
+                        string productName;
+                        productName = products.Find(p => p.Id == item.ProductId).Name;
+                        if (String.IsNullOrEmpty(productName))
+                        {
+                            productName = "Не найден";
+                        }
+                        <li>
+                            @productName X @item.Quantity
+                        </li>
+                    }
+                </ul>
+            </td>
+        </tr>
+    }
+}
+    </tbody>
+</table>

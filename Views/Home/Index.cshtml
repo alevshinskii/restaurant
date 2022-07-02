@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<div id="myCarousel" class="carousel slide w-100 h-auto mb-5" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+    </div>
+
+    <div class="carousel-inner">
+        @{
+            var files = new List<string>() { "1.png","2.png","3.png","4.png","5.png"};
+            var first = true;
+        }
+        
+        @foreach (var file in files)
+        {
+            if (first)
+            {
+                <div class="carousel-item active">
+                    <div class="container">
+                        <img src="~/images/carousel/@file" alt="@file" class="w-100"/>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <div class="carousel-item">
+                    <div class="container">
+                        <img src="~/images/carousel/@file" alt="@file" class="w-100"/>
+                    </div>
+                </div>
+            }
+            first = false;
+        }
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </button>
+
+</div>
+@{
+    var popular = (List<Product>)ViewBag.PopularProducts;
+}
+@if (popular.Count > 0)
+{
+    <h2 class="mb-3">Популярно сейчас</h2>
+    <div class="row mb-5">
+            @foreach (var item in popular)
+            {
+                if (item.Available > 0){
+                    <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+                        <div class="card px-0">
+                            <div class="card-header">
+                                <img src="@item.ImageUrl" alt="@item.ImageUrl" class="w-100"/>
+                            </div>
+                            <div class="card-body text-center fw-bold py-2 text-nowrap overflow-hidden">
+                                @item.Name
+                            </div>
+                            <div class="card-footer fw-bold text-end" >
+                     
+                                @item.Price ₽ 
+                                <a asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" class="btn btn-success">В корзину</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+    </div>
+}

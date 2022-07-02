@@ -1,0 +1,38 @@
+﻿@model Restaurant.Models.ChangeRoleViewModel
+@using Microsoft.AspNetCore.Identity
+@{
+    ViewData["Title"] = "Изменение ролей";
+}
+<h2>Изменение ролей для пользователя @Model.Email</h2>
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <form asp-action="EditRole" asp-conroller="Admin" method="Post">
+            <input type="hidden" name="id" value="@Model.Id"/>
+
+            @foreach (IdentityRole role in Model.AllRoles)
+            {
+                <div class="form-group mb-3">
+                    @if (Model.UserRoles.Contains(role.Name))
+                    {
+                        <label>
+                            <input type="checkbox" name="roles" value="@role.Name"
+                                   checked="checked"/>
+                            @role.Name
+                        </label>
+                    }
+                    else
+                    {
+                        <label>
+                            <input type="checkbox" name="roles" value="@role.Name"/>
+                            @role.Name
+                        </label>
+                    }
+                </div>
+            }
+
+            <div class="form-group mb-3">
+                <input type="submit" value="Сохранить" class="btn btn-success"/>
+            </div>
+        </form>
+    </div>
+</div>
